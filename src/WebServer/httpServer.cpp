@@ -124,7 +124,7 @@ cleanup:
 
 void httpServer::pageReader(string page) {
     
-    if (page == "/") {// mavin page
+    if (page == "/") {// main page
         return ;
     }
     else {
