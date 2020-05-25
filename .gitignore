@@ -6,5 +6,5 @@
 *.tokens
 *.gch
 *.html
-.vocode
+.vscode
 html
