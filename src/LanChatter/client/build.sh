@@ -1,0 +1,1 @@
+g++ ./*.cpp -lws2_32 -I../../../3rdparty/ -std=c++11 -Winvalid-pch
