@@ -8,3 +8,6 @@
 *.html
 .vscode
 html
+build-*
+build
+*.user
