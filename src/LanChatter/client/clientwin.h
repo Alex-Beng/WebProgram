@@ -28,10 +28,19 @@ class ClientWin :public QWidget {
 public:
     explicit ClientWin(QWidget *parent = 0);
     ~ClientWin();
+
+    void setPersonInfo(std::string user_name, std::string ip, USHORT port);
 private:
     Ui::ClientWin *ui;
 
-    
+    std::string user_name;
+    std::string ip;
+    USHORT port;
+
+    SOCKET connect_socket;
+    sockaddr_in server_addr;
+
+    json chat_list;
 protected:
 
 private slots:

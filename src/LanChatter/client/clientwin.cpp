@@ -19,14 +19,19 @@
 
 ClientWin::ClientWin(QWidget *parent) : QWidget(parent), ui(new Ui::ClientWin) {     
     ui->setupUi(this);
-
-    
 }
-
 
 ClientWin::~ClientWin() {
     delete ui;
 }
+
+void ClientWin::setPersonInfo(std::string user_name, std::string ip, USHORT port) {
+    this->user_name = user_name;
+    this->ip = ip;
+    this->port = port;
+    
+}
+
 
 void ClientWin::processPendingDatagrams(){}
 void ClientWin::getFileName(QString){}
