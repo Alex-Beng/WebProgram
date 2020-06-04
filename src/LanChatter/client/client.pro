@@ -24,7 +24,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 HEADERS += \
     ../../../3rdparty/json.hpp  \
     clientwin.h \
-    menubutton.h 
+    menubutton.h \
+    recvmsg.h
 # SOURCES +=  main.cpp client.cpp
 SOURCES += \
     main.cpp \
@@ -41,3 +42,5 @@ HEADERS += \
     clientwin.h
 
 RESOURCES += images.qrc
+
+#CONFIG += console

@@ -8,10 +8,14 @@ using json = nlohmann::json;
 #include <fstream>
 using namespace std;
 
+#include <QMetaType>
 #include <QApplication>
 #include <QCommandLineParser>
 
+
 int main(int argc, char *argv[]) {
+    qRegisterMetaType<std::string>("std::string"); 
+
     QApplication a(argc, argv);
     QApplication::setApplicationName("ab-lan-chatter-client");
     QApplication::setApplicationVersion("1.0");
@@ -45,8 +49,10 @@ int main(int argc, char *argv[]) {
     USHORT port =  parser.value(portOption).toUShort();
     std::string user_name = parser.value(nameOption).toStdString();
 
-    ClientWin cw;
-    cw.setPersonInfo(user_name, ip, port);
+    cout<<user_name<<endl;
+
+    ClientWin cw(0, user_name, ip, port);
+    // cw.setPersonInfo(user_name, ip, port);
     cw.show();
 
     return a.exec();

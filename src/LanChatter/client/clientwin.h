@@ -1,6 +1,8 @@
 #ifndef CLIENTWIN_H
 #define CLIENTWIN_H
 
+#include "recvmsg.h"
+
 #include "json.hpp"
 using json = nlohmann::json;
 
@@ -17,19 +19,22 @@ using json = nlohmann::json;
 #include <QAction>
 #include <QtNetwork/QUdpSocket>
 
+#include <iostream>
+using namespace std;
+
 namespace Ui {
 class ClientWin;
 }
 
-enum MessageType{Message,NewParticipant,Participantleft,FileName,Refuse};
+// 常规msg(base64传文件)，连接server，新建群组，  断开server，向xxx发文件，拒绝接受文件
+enum MessageType{Message, NewParticipant, NewGroup, Participantleft, FileSend, Refuse};
 
 class ClientWin :public QWidget {
     Q_OBJECT
 public:
-    explicit ClientWin(QWidget *parent = 0);
+    ClientWin(QWidget *parent, std::string user_name, std::string ip, USHORT port);
     ~ClientWin();
 
-    void setPersonInfo(std::string user_name, std::string ip, USHORT port);
 private:
     Ui::ClientWin *ui;
 
@@ -41,11 +46,14 @@ private:
     sockaddr_in server_addr;
 
     json chat_list;
-protected:
 
+    recvMsg* recv_thread;
+protected:
+    // 向服务器发送msg
+    void sendMessage(MessageType type, std::string msg="");
 private slots:
-    void processPendingDatagrams();
-    void getFileName(QString);
+    void on_recv_msg(std::string);  // 处理接收到的msg
+
     void on_sendButton_clicked();
     void on_sendToolButton_clicked();
     void on_fontComboBox_currentFontChanged(const QFont &f);
@@ -66,7 +74,6 @@ private slots:
     void bg2();
     void bg3();
     void bg4();
-
 };
 
 

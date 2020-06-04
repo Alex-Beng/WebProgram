@@ -31,7 +31,7 @@ int main(int argc, char const *argv[]) {
     sockaddr_in addrServer;
     addrServer.sin_family = AF_INET;
     addrServer.sin_addr.s_addr = htonl(INADDR_ANY); //实际上是0
-    addrServer.sin_port = htons(20131);
+    addrServer.sin_port = htons(666);
 
 
 	//绑定套接字到一个IP地址和一个端口上
@@ -68,14 +68,19 @@ int main(int argc, char const *argv[]) {
 			if(count==SOCKET_ERROR)break;//错误count<0
 			int sendCount,currentPosition=0;
 			
-			printf("接收来自客户端%s的信息：%s\n",inet_ntoa(addrClient.sin_addr), recvBuf);
-            string t_s(recvBuf);
+			// printf("接收来自客户端%s的信息：%s\n",inet_ntoa(addrClient.sin_addr), recvBuf);
+            string t_s(recvBuf, recvBuf+strlen(recvBuf));
+            // cout<<t_s[t_s.length()-1]<<endl;
+            t_s = t_s.substr(0, t_s.length()-1);
+            cout<<t_s<<endl;
             auto j = json::parse(t_s);
             // cout<<j<<endl;
             
             json tj;
+            tj["method"] = "hello";
             tj["chat list"] = {"fuck", "you"};
             tj["chat list"].push_back(j["user name"]);
+            // cout<<tj.dump().length()<<endl;
             send(AcceptSocket, tj.dump().c_str(), tj.dump(4).length(), 0);
 		}
 		//结束连接
