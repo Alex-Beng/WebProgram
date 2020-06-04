@@ -35,8 +35,11 @@ public:
     ClientWin(QWidget *parent, std::string user_name, std::string ip, USHORT port);
     ~ClientWin();
 
+    /* AboutpushButton按钮下的菜单 */
+    QAction *b1,*b2,*b3,*b4,*b;
 private:
     Ui::ClientWin *ui;
+    QColor color;
 
     std::string user_name;
     std::string ip;
@@ -48,9 +51,20 @@ private:
     json chat_list;
 
     recvMsg* recv_thread;
+
+    // 重写鼠标拖动事件
+    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    QPoint StartPos; // 用于记录窗口位置
+
 protected:
     // 向服务器发送msg
     void sendMessage(MessageType type, std::string msg="");
+
+    // 重载widget事件函数
+    void paintEvent(QPaintEvent *);
+    bool eventFilter(QObject *obj, QEvent *event);
+
 private slots:
     void on_recv_msg(std::string);  // 处理接收到的msg
 
@@ -75,6 +89,18 @@ private slots:
     void bg3();
     void bg4();
 };
+
+class NoFocusDelegate : public QStyledItemDelegate
+{
+protected:
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
+        QStyleOptionViewItem itemOption(option);
+        if (itemOption.state & QStyle::State_HasFocus)
+            itemOption.state = itemOption.state ^ QStyle::State_HasFocus;
+        QStyledItemDelegate::paint(painter, itemOption, index);
+    }
+};
+
 
 
 #endif // CLIENTWIN_H
