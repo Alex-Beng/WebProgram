@@ -9,6 +9,8 @@
 #include <QDebug>
 #include<QMessageBox>
 
+
+#include <string.h>
 #include <iostream>
 using namespace std;
 
@@ -20,8 +22,6 @@ public:
         this->mSocket = mSocket;
     }
     void run() {
-        // QMessageBox::warning(0,tr("警告"), tr("recv thread running.."), QMessageBox::Ok);
-        // qDebug()<<"recv thread running..."<<endl;
         char buf[10240] = {0};
         while(1) {
             int ret = ::recv(mSocket, buf, 10240, 0);
@@ -33,10 +33,9 @@ public:
             }
             else {
                 std::string recv_msg(buf, buf+strlen(buf));
-                // cout<<"get "<<ret<<":"<<recv_msg<<endl;
                 emit isMsg(recv_msg);
             }
-            
+            memset(buf, 0, sizeof(buf));
         }
 
     }

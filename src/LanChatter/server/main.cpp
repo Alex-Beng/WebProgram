@@ -1,3 +1,5 @@
+#include "base64.h"
+
 #include "json.hpp"
 using json = nlohmann::json;
 
@@ -5,6 +7,7 @@ using json = nlohmann::json;
 #include <ws2tcpip.h>
 
 #include <string>
+#include <fstream>
 #include <iostream>
 using namespace std;
 
@@ -69,19 +72,59 @@ int main(int argc, char const *argv[]) {
 			int sendCount,currentPosition=0;
 			
 			// printf("接收来自客户端%s的信息：%s\n",inet_ntoa(addrClient.sin_addr), recvBuf);
-            string t_s(recvBuf, recvBuf+strlen(recvBuf));
+            string tt_s(recvBuf, recvBuf+strlen(recvBuf));
             // cout<<t_s[t_s.length()-1]<<endl;
-            t_s = t_s.substr(0, t_s.length()-1);
+            // t_s = t_s.substr(0, t_s.length()-1);
+            cout<<tt_s<<endl;
+            string t_s = "";
+            
+            for (int i=0; i<tt_s.size(); i++) {
+                if (tt_s[i] == '{') {
+                    do {
+                        t_s += tt_s[i];
+                        i++;
+                    } while(tt_s[i] != '}');
+                }
+            }
+            t_s += '}';
             cout<<t_s<<endl;
+            
             auto j = json::parse(t_s);
             // cout<<j<<endl;
             
             json tj;
             tj["method"] = "hello";
             tj["chat list"] = {"fuck", "you"};
-            tj["chat list"].push_back(j["user name"]);
+            if (j["user name"].is_string())
+                tj["chat list"].push_back(j["user name"]);
             // cout<<tj.dump().length()<<endl;
-            send(AcceptSocket, tj.dump().c_str(), tj.dump(4).length(), 0);
+            send(AcceptSocket, tj.dump().c_str(), tj.dump().length(), 0);
+
+            json ttj;
+            ttj["method"] = "message";
+            ttj["sender"] = "fuck";
+            ttj["msg"] = "fuck you, web program";
+            send(AcceptSocket, ttj.dump().c_str(), ttj.dump().length(), 0);
+
+            json tttj;
+            tttj["method"] = "file";
+            tttj["sender"] = "fuck";
+
+            string inputFilename("./build.sh");
+            ifstream ifs(inputFilename, ifstream::in|ifstream::binary);
+            ifs.seekg (0, ios::end);   
+            size_t length = ifs.tellg();  
+            ifs.seekg (0, ios::beg);
+            char buffer[length];
+            ifs.read(buffer, length);
+            std::string encoded = base64_encode(string(buffer, buffer+length), length);
+
+            tttj["file name"] ="./build.sh";
+            tttj["file"] = encoded;
+            if (j["method"] == "hello")
+                send(AcceptSocket, tttj.dump().c_str(), tttj.dump().length(), 0);
+            // Sleep(2000);
+
 		}
 		//结束连接
 		closesocket(AcceptSocket);

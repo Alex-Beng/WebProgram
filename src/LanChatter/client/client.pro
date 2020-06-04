@@ -6,7 +6,8 @@ QT += widgets gui core
 TEMPLATE = app
 TARGET = client
 INCLUDEPATH +=  . \
-            ../../../3rdparty/
+            ../../../3rdparty/ \
+            ../base64
 
 # The following define makes your compiler warn you if you use any
 # feature of Qt which has been marked as deprecated (the exact warnings
@@ -25,12 +26,14 @@ HEADERS += \
     ../../../3rdparty/json.hpp  \
     clientwin.h \
     menubutton.h \
-    recvmsg.h
+    recvmsg.h \
+    ../base64/base64.h
 # SOURCES +=  main.cpp client.cpp
 SOURCES += \
     main.cpp \
     clientwin.cpp \
-    menubutton.cpp
+    menubutton.cpp \
+    ../base64/base64.cpp
 
 CONFIG += c++11
 LIBS += libws2_32
@@ -44,3 +47,4 @@ HEADERS += \
 RESOURCES += images.qrc
 
 #CONFIG += console
+RC_ICONS = QQ.ico

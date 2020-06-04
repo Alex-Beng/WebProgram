@@ -19,6 +19,7 @@ using json = nlohmann::json;
 #include <QAction>
 #include <QtNetwork/QUdpSocket>
 
+#include <fstream>
 #include <iostream>
 using namespace std;
 
@@ -26,8 +27,8 @@ namespace Ui {
 class ClientWin;
 }
 
-// 常规msg(base64传文件)，连接server，新建群组，  断开server，向xxx发文件，拒绝接受文件
-enum MessageType{Message, NewParticipant, NewGroup, Participantleft, FileSend, Refuse};
+// 常规msg，连接server，新建群组，断开server，向xxx发文件
+enum MessageType{Message, NewParticipant, NewGroup, Participantleft, FileSend};
 
 class ClientWin :public QWidget {
     Q_OBJECT
@@ -59,7 +60,7 @@ private:
 
 protected:
     // 向服务器发送msg
-    void sendMessage(MessageType type, std::string msg="");
+    void sendMessage(MessageType type);
 
     // 重载widget事件函数
     void paintEvent(QPaintEvent *);

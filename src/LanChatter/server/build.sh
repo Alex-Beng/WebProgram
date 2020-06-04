@@ -1,1 +1,1 @@
-g++ ./*.cpp -lws2_32 -I../../../3rdparty/ -std=c++11 -Winvalid-pch
+g++ ./*.cpp ../base64/base64.cpp -lws2_32 -I../../../3rdparty/ -I../base64/ -std=c++11 -Winvalid-pch
