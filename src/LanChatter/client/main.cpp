@@ -1,4 +1,3 @@
-#include "client.h"
 #include "clientwin.h"  
 
 #include "json.hpp"

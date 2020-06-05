@@ -11,3 +11,4 @@ html
 build-*
 build
 *.user
+*.stash

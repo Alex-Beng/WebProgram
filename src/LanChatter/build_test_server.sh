@@ -1,0 +1,1 @@
+g++ test_server.cpp ./base64/base64.cpp -lws2_32 -I../../3rdparty -I./base64 -std=c++11

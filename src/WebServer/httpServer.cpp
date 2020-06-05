@@ -5,7 +5,6 @@ std::string main_path;
 std::string main_page;
 std::map<std::string, std::string> page2data;
 
-
 httpServer::httpServer(int port, size_t buf_size, std::string main_path_, std::string main_page_) {
     this->port = port;
     this->buf_size = buf_size;
@@ -103,6 +102,8 @@ void httpServer::clientHandler(SOCKET client_socket, size_t buffer_size) {
     client_ip = inet_ntoa(client_info.sin_addr);
     
     bytes_received = recv(client_socket, recvbuf, recvbuflen, 0);
+    cout<<bytes_received<<endl;
+    cout<<strlen(recvbuf)<<endl;
     parser.process(recvbuf, bytes_received);
 
     // std::cout<<"ya: ";

@@ -12,6 +12,8 @@
 #include<QDateTime>
 #include<QtNetwork/QNetworkInterface>
 #include<QProcess>
+#include<QLineEdit>
+#include<QInputDialog>
 
 #include <QFileDialog>
 
@@ -100,6 +102,7 @@ ClientWin::ClientWin(QWidget *parent, std::string user_name, std::string ip, USH
     ui->userTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);//表格只读
     ui->userTableWidget->setItemDelegate(new NoFocusDelegate());//去掉表格虚框
     ui->userTableWidget->setTextElideMode(Qt::ElideRight);//防止文本过长显示右边
+    ui->userTableWidget->setSelectionMode(QAbstractItemView::ExtendedSelection); // 允许多选
 
     QMenu * menu = ui->menuButton->getmenu();
     b1 = new QAction(QIcon(":/images/menu.png"), tr("&星球皮肤"), this);
@@ -119,7 +122,6 @@ ClientWin::ClientWin(QWidget *parent, std::string user_name, std::string ip, USH
     connect(b,SIGNAL(triggered(bool)),this,SLOT(bg())); // 放最后实现默认皮肤
     ui->messageTextEdit->installEventFilter(this);//回车键发消息监听
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);//任务栏使程序最小化
-
 
 }
 
@@ -187,6 +189,16 @@ void ClientWin::sendMessage(MessageType type) {
         cout<<jmsg.dump()<<endl;
         std::string t_s = jmsg.dump();
         send(connect_socket, t_s.c_str(), t_s.length(), 0);
+
+        // update in chat win
+        QString time=QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        QString sender_qs = QString::fromStdString(user_name);
+        QString msg_qs = QString::fromStdString(msg.toStdString());
+        ui->messageBrowser->setTextColor(Qt::black);
+        ui->messageBrowser->setCurrentFont(QFont("黑体",12));
+        ui->messageBrowser->append("["+sender_qs+"]"+time);
+        ui->messageBrowser->append(msg_qs);
+        
     }
     else if (type == FileSend) {
         json jmsg;
@@ -197,6 +209,14 @@ void ClientWin::sendMessage(MessageType type) {
                        tr("请先从右侧列表选择要传送的用户！"), QMessageBox::Ok);
             return;
         }
+        QList<QTableWidgetItem*> items = ui->userTableWidget->selectedItems();
+        int row = ui->userTableWidget->row(items.at(0));
+        QTableWidgetItem *item = items.at(0);
+        QString receiver_qs = item->text();
+        jmsg["receiver"] = receiver_qs.toStdString();
+        jmsg["sender"] = user_name;
+        
+        
         // get file & its base64
         QString file_path = QFileDialog::getOpenFileName(this);
         QString file_name = file_path.right(file_path.size() - file_path.lastIndexOf('/')-1);
@@ -210,6 +230,46 @@ void ClientWin::sendMessage(MessageType type) {
         jmsg["file name"] = file_name.toStdString();
         jmsg["file"] = file_encoded;
         
+        std::string t_s = jmsg.dump();
+        send(connect_socket, t_s.c_str(), t_s.length(), 0);
+    }
+    else if (type == NewGroup) {
+        json jmsg;
+        jmsg["method"] = "new group";
+
+        if(ui->userTableWidget->selectedItems().isEmpty()) {
+            QMessageBox::warning(0, tr("创建群聊"),
+                       tr("从右侧列表选择要建群的用户！\n摁Shift多选"), QMessageBox::Ok);
+            return;
+        }
+        QList<QTableWidgetItem*> items = ui->userTableWidget->selectedItems();
+        int cnt = items.count();// 选中的人
+        if (cnt < 2) {
+            QMessageBox::warning(0, tr("创建群聊"),
+                       tr("至少选两个人群聊鸭"), QMessageBox::Ok);
+            return;
+        }
+        jmsg["group members"] = {user_name};
+        for (int i=0; i<cnt; i++) {
+            QTableWidgetItem *item = items.at(i);
+            QString slected_user_qs = item->text();
+            if (slected_user_qs.toStdString() == user_name) {
+                continue;
+            }
+            else {
+                jmsg["group members"].push_back(slected_user_qs.toStdString());
+            }
+        }
+        bool input_ok;
+        QString group_name_qs = QInputDialog::getText(this, tr("创建群聊"), tr("请输入群名"), QLineEdit::Normal,0, &input_ok);
+        if (input_ok && !group_name_qs.isEmpty()) {
+            jmsg["group name"] = group_name_qs.toStdString();
+        }
+        else {
+            QMessageBox::warning(0, tr("创建群聊"),
+                       tr("求求你正确操作八，我写的快吐了"), QMessageBox::Ok);
+            return;
+        }
         std::string t_s = jmsg.dump();
         send(connect_socket, t_s.c_str(), t_s.length(), 0);
     }
@@ -268,11 +328,20 @@ void ClientWin::on_recv_msg(std::string msg){
     cout<<"get: "<<msg<<endl;
 
     auto js = json::parse(msg);
+    if (js["sender"].is_string() && js["sender"] == user_name) {
+        return ;
+    }
 
     std::string method;
     js["method"].get_to<std::string>(method);
 
     if (method == "hello") {
+        if (js["fuck off"].is_boolean() && js["fuck off"]) {
+            QMessageBox::warning(0, tr("连接"),
+                       tr("重名狗，给爷爬"), QMessageBox::Ok);
+            close();
+        }
+
         cout<<"updating chat list..."<<endl;
         // update data
         chat_list = js["chat list"];
@@ -330,6 +399,8 @@ void ClientWin::on_recv_msg(std::string msg){
                                            QMessageBox::Yes,QMessageBox::No);
         json respond;
         respond["method"] = "file respond";
+        respond["file name"] = file_name;
+        respond["sender"] = user_name;
         respond["receiver"] = sender;
         if (btn == QMessageBox::Yes) {
             QString file_path = QFileDialog::getSaveFileName(0, tr("保存文件"), file_name_qs);
@@ -337,18 +408,45 @@ void ClientWin::on_recv_msg(std::string msg){
                 std::ofstream out(file_path.toStdString().c_str(), ios_base::out|ios_base::binary);
                 out.write(decoded_file.c_str(), decoded_file.length());
                 out.close();
-                QMessageBox::information(this, tr("information"), tr("接受成功"));
+                // show in chat box
+                ui->messageBrowser->setTextColor(Qt::gray);
+                ui->messageBrowser->setCurrentFont(QFont("黑体",8));
+                ui->messageBrowser->append("你接收了文件:"+QString::fromStdString(file_name));
                 respond["succeed"] = true;
             }
             else {
+                ui->messageBrowser->setTextColor(Qt::gray);
+                ui->messageBrowser->setCurrentFont(QFont("黑体",8));
+                ui->messageBrowser->append("你拒收了文件:"+QString::fromStdString(file_name));
                 respond["succeed"] = false;
             }
         }
         else {
+            ui->messageBrowser->setTextColor(Qt::gray);
+            ui->messageBrowser->setCurrentFont(QFont("黑体",8));
+            ui->messageBrowser->append("你拒收了文件:"+QString::fromStdString(file_name));
             respond["succeed"] = false;
         }
         std::string t_s = respond.dump();
         send(connect_socket, t_s.c_str(), t_s.length(), 0);
+    }
+    else if (method == "file respond") {
+        std::string sender;
+        std::string file_name;
+        js["sender"].get_to<std::string>(sender);
+        js["file name"].get_to<std::string>(file_name);
+        if (js["succeed"].is_boolean()) {
+            if (js["succeed"]) {
+                ui->messageBrowser->setTextColor(Qt::gray);
+                ui->messageBrowser->setCurrentFont(QFont("黑体",8));
+                ui->messageBrowser->append(QString::fromStdString(sender)+"接收了文件:"+QString::fromStdString(file_name));
+            }
+            else {
+                ui->messageBrowser->setTextColor(Qt::gray);
+                ui->messageBrowser->setCurrentFont(QFont("黑体",8));
+                ui->messageBrowser->append(QString::fromStdString(sender)+"拒收了文件:"+QString::fromStdString(file_name));
+            }
+        }
     }
 }
 
@@ -480,4 +578,9 @@ void ClientWin::bg3(){
 }
 void ClientWin::bg4(){
     ui->stackedWidget->setStyleSheet("QStackedWidget {background-image: url(:/images/background4.jpg);}");
+}
+
+// 建群
+void ClientWin::on_createGroup_clicked() {
+    sendMessage(NewGroup);
 }

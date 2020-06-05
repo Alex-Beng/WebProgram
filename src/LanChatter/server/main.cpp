@@ -1,3 +1,5 @@
+#include "chatServer.h"
+
 #include "base64.h"
 
 #include "json.hpp"
@@ -6,12 +8,43 @@ using json = nlohmann::json;
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
+#include <QMetaType>
+#include <QCoreApplication>
+#include <QCommandLineParser>
+
 #include <string>
 #include <fstream>
 #include <iostream>
 using namespace std;
 
-int main(int argc, char const *argv[]) {
+int main(int argc, char *argv[]) {
+    QCoreApplication a(argc, argv);
+    QCoreApplication::setApplicationName("ab-lan-chatter-server");
+    QCoreApplication::setApplicationVersion("1.0");
+
+    // 设置server 端口
+    QCommandLineParser parser;
+    parser.setApplicationDescription("ab-lan-chatter-server");
+    parser.addHelpOption();
+    parser.addVersionOption();
+
+    parser.setApplicationDescription(QCoreApplication::translate("main", "Qt"));  
+    QCommandLineOption portOption(QStringList() << "port" << "p",
+                                   QCoreApplication::translate("main", "port of the server (default is 666)."),
+                                   QCoreApplication::translate("main", "port"), "666");
+    parser.addOption(portOption);
+    parser.process(a);
+
+    USHORT port =  parser.value(portOption).toUShort();
+    cout<<port<<endl;
+    chatServer server(port);
+    server.run();
+    
+    exit(0);
+    return a.exec();
+
+
+    // ↓↓↓↓abandoned↓↓↓↓
     WSADATA wsaData;
     int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != NO_ERROR) {
@@ -60,14 +93,17 @@ int main(int argc, char const *argv[]) {
 	int len=sizeof(SOCKADDR);
     while(1)
 	{
+
 		//请求到来后，接受连接请求，返回一个新的对应于此次连接的套接字
 		SOCKET AcceptSocket=accept(ListenSocket,(SOCKADDR*)&addrClient,&len);
 		if(AcceptSocket  == INVALID_SOCKET)break; //出错
 
 		char recvBuf[10240];
 		while(1){
+            memset(recvBuf, 0, sizeof(recvBuf));
+
 			int count =recv(AcceptSocket ,recvBuf,10240,0);
-			if(count==0)break;//被对方关闭
+			if(count==0)break;//被\对方关闭
 			if(count==SOCKET_ERROR)break;//错误count<0
 			int sendCount,currentPosition=0;
 			
@@ -110,16 +146,17 @@ int main(int argc, char const *argv[]) {
             tttj["method"] = "file";
             tttj["sender"] = "fuck";
 
-            string inputFilename("./build.sh");
+            string inputFilename("C:/test.txt");
             ifstream ifs(inputFilename, ifstream::in|ifstream::binary);
             ifs.seekg (0, ios::end);   
             size_t length = ifs.tellg();  
             ifs.seekg (0, ios::beg);
+            cout<<length<<endl;
             char buffer[length];
             ifs.read(buffer, length);
             std::string encoded = base64_encode(string(buffer, buffer+length), length);
 
-            tttj["file name"] ="./build.sh";
+            tttj["file name"] ="./test.txt";
             tttj["file"] = encoded;
             if (j["method"] == "hello")
                 send(AcceptSocket, tttj.dump().c_str(), tttj.dump().length(), 0);

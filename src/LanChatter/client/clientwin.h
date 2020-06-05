@@ -67,6 +67,7 @@ protected:
     bool eventFilter(QObject *obj, QEvent *event);
 
 private slots:
+    void on_createGroup_clicked();  // 建群
     void on_recv_msg(std::string);  // 处理接收到的msg
 
     void on_sendButton_clicked();
@@ -84,6 +85,7 @@ private slots:
     void on_closeButton_clicked();
     void on_minButton_clicked();
     void on_maxButton_clicked();
+
     void bg();
     void bg1();
     void bg2();
@@ -91,8 +93,7 @@ private slots:
     void bg4();
 };
 
-class NoFocusDelegate : public QStyledItemDelegate
-{
+class NoFocusDelegate : public QStyledItemDelegate {
 protected:
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
         QStyleOptionViewItem itemOption(option);
