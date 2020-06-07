@@ -1,0 +1,80 @@
+.changeSkip {
+  position: fixed;
+  top: 100px;
+  right: 0;
+  z-index: 100;
+  list-style: none;
+}
+.changeSkip li {
+  display: none;
+  float: left;
+  width: 30px;
+  height: 30px;
+  background-image: url(skin.png);
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+.changeSkip li.default {
+  width: 43px;
+  height: 30px;
+  background: url(default.png) no-repeat center center;
+}
+.changeSkip .sjx {
+  /*display: none;*/
+  float: left;
+  width: 13px;
+  height: 30px;
+  background: url(default.png) no-repeat left center;
+}
+.changeSkip .selected {
+  display: block!important;
+}
+.changeSkip.open li {
+  display: block;
+}
+/*
+ * The following two rules are for IE only and
+ * should be wrapped in conditional comments.
+ * The -ms-filter rule should be on one line 
+ * and always *before* the filter rule if
+ * used in the same rule.
+ */
+.sjxbox {
+  width: 30px;
+  height: 30px;
+  float: left;
+  overflow: hidden;
+  /*display: none;*/
+  position: relative;
+  
+}
+.transformedObject {
+  display: none;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  right: -30px;
+    top: -5px;
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  background-color: #38b4e6;
+}
+/* .transformedObject {
+  -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.7071067811865474, M12=-0.7071067811865477, M21=0.7071067811865477, M22=0.7071067811865474, SizingMethod='auto expand')";
+  filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=-0.70710678, M21=0.70710678, M22=0.70710678, SizingMethod='auto expand')\9*;
+  ie8
+  
+  right: -15px\9;
+  right: -20px\0;
+  *right: -27px;
+
+  top: -5px\9;
+  top: 0\0;
+  margin-left: -9px; 
+   margin-top: -9px;
+  ie8 r-15 t-5 
+  
+} */
