@@ -629,7 +629,7 @@ html {
 }
 ._i-24h {
   padding-left: 20px;
-  background: url(../images/index/icon/24h.png) no-repeat center center;
+  background: url(../images/24h.png) no-repeat center center;
 }
 ._i-guest {
   padding-left: 20px;
@@ -704,7 +704,7 @@ html {
 }
 .login_box_m .login_form_detail .left_side .input_div.psw {
   margin-bottom: 30px;
-  background: url(../images/index/icon/keyboard.png) no-repeat 350px center;
+  background: url(../images/keyboard.png) no-repeat 350px center;
 }
 .login_box_m .login_form_detail .left_side .input_div input {
   display: inline-block;
@@ -735,10 +735,10 @@ html {
   content: "";
 }
 .login_box_m .login_form_detail .left_side .input_div ._icon._i-user {
-  background: url(../images/index/icon/user.gif) no-repeat center center;
+  background: url(../images/user.gif) no-repeat center center;
 }
 .login_box_m .login_form_detail .left_side .input_div ._icon._i-psw {
-  background: url(../images/index/icon/psw.gif) no-repeat center center;
+  background: url(../images/psw.gif) no-repeat center center;
 }
 .login_box_m .login_form_detail .left_side .sub_btn {
   border: none;
@@ -847,7 +847,7 @@ html {
 }
 ._i-24h {
   padding-left: 20px;
-  background: url(../images/index/icon/24h.png) no-repeat center center;
+  background: url(../images/24h.png) no-repeat center center;
 }
 ._i-guest {
   padding-left: 20px;
@@ -2209,7 +2209,7 @@ body {
   left: 50%;
   top: -30px;
   margin-left: -70px;
-  background: url(../images/index/uptotop.png) no-repeat bottom center;
+  background: url(../images/uptotop.png) no-repeat bottom center;
   width: 140px;
   height: 30px;
 }
@@ -2329,7 +2329,7 @@ body {
     left: 50%;
     top: -24px;
     margin-left: -62px;
-    background: url(../images/index/uptotop.png) no-repeat bottom center;
+    background: url(../images/uptotop.png) no-repeat bottom center;
     background-size: 100%;
     width: 124px;
     height: 24px;
@@ -2339,8 +2339,8 @@ body {
     text-align: center;
     width: 20px;
     height: 20px;
-    background: url(../images/index/icon/finger.png) no-repeat center center;
-    _background: url(../images/index/icon/up.png) no-repeat center center;
+    background: url(../images/finger.png) no-repeat center center;
+    _background: url(../images/up.png) no-repeat center center;
     background-size: 100%;
     position: absolute;
     left: 50%;
@@ -2849,7 +2849,7 @@ html {
 }
 ._i-24h {
   padding-left: 20px;
-  background: url(../images/index/icon/24h.png) no-repeat center center;
+  background: url(../images/24h.png) no-repeat center center;
 }
 ._i-guest {
   padding-left: 20px;
@@ -2924,7 +2924,7 @@ html {
 }
 .login_box_m .login_form_detail .left_side .input_div.psw {
   margin-bottom: 30px;
-  background: url(../images/index/icon/keyboard.png) no-repeat 350px center;
+  background: url(../images/keyboard.png) no-repeat 350px center;
 }
 .login_box_m .login_form_detail .left_side .input_div input {
   display: inline-block;
@@ -2955,10 +2955,10 @@ html {
   content: "";
 }
 .login_box_m .login_form_detail .left_side .input_div ._icon._i-user {
-  background: url(../images/index/icon/user.gif) no-repeat center center;
+  background: url(../images/user.gif) no-repeat center center;
 }
 .login_box_m .login_form_detail .left_side .input_div ._icon._i-psw {
-  background: url(../images/index/icon/psw.gif) no-repeat center center;
+  background: url(../images/psw.gif) no-repeat center center;
 }
 .login_box_m .login_form_detail .left_side .sub_btn {
   border: none;
@@ -3230,7 +3230,7 @@ html {
     display: none;
   }
   #page1 {
-    background-image: url("../images/index/m/bg/1.jpg");
+    background-image: url("../images/1.jpg");
     background-position: bottom center;
   }
   #page2 {
