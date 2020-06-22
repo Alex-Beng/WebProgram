@@ -5,9 +5,7 @@
 *.interp
 *.tokens
 *.gch
-*.html
 .vscode
-html
 build-*
 build
 *.user
