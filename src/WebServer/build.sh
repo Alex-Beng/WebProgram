@@ -1,1 +1,1 @@
-g++ ./*.cpp ./*.h -lws2_32 -std=c++11
+g++ ./*.cpp ./*.h -lws2_32 -std=c++0x -O2
