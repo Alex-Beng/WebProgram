@@ -61,7 +61,7 @@ void chatServer::run() {
         }
         cout<<"new client!"<<endl;
         threads[client_socket] = std::thread(chatServer::clientHandler, client_socket);
-        // threads[client_socket].join();
+        threads[client_socket].detach();
     }
 
 
